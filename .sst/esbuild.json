@@ -1,5 +1,5 @@
 
-  .sst/platform/sst.config.1760561295425.mjs ────────────────────────────────────── 758.9kb ─ 100.0%
+  .sst/platform/sst.config.1760562819450.mjs ────────────────────────────────────── 759.0kb ─ 100.0%
    ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 34.9kb ─── 4.6%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
@@ -747,6 +747,8 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
+   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 486b ──── 0.1%
+   │  └ eval.ts
    ├ .sst/platform/src/util/semaphore.ts ──────────────────────────────────────────── 482b ──── 0.1%
    │  └ .sst/platform/src/components/aws/helpers/site-builder.ts
    │     └ .sst/platform/src/components/base/base-static-site.ts
@@ -781,8 +783,6 @@
    │  └ .sst/platform/src/components/index.ts
    │     └ sst.config.ts
    │        └ eval.ts
-   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 349b ──── 0.0%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/step-functions/fail.ts ──────────────────────── 326b ──── 0.0%
    │  └ .sst/platform/src/components/aws/step-functions.ts
    │     └ .sst/platform/src/components/aws/index.ts

@@ -2,6 +2,8 @@
 
 **A beautiful, privacy-first task manager built with modern web technologies**
 
+![Toddy App Preview](apps/landing/public/hero.png)
+
 Toddy is a cross-platform desktop application that helps you organize your tasks with a clean, intuitive interface. All your data stays on your device - no cloud, no tracking, just pure productivity.
 
 ## ✨ Features
