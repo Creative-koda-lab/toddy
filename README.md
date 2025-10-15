@@ -242,9 +242,38 @@ interface Todo {
 3. **New Constant**: Add to `apps/desktop/src/constants/tags.ts`
 4. **New Storage Method**: Extend `apps/desktop/src/lib/storage.ts`
 
-## 🚢 Building for Production
+## 🚢 Deployment & Building
 
-### Desktop App
+### Automated Deployment
+
+This project includes complete CI/CD pipelines for automated deployment:
+
+#### 🌐 Landing Page (AWS)
+- **Automatic deployment** to AWS using SST on push to `main`
+- **Preview deployments** for pull requests
+- Deployed via **GitHub Actions** to AWS CloudFront + Lambda
+
+```bash
+# Deploy manually
+npx sst deploy --stage production
+```
+
+#### 📦 Desktop App Releases
+- **Automatic releases** created when pushing version tags
+- **Multi-platform builds**: Windows, macOS, Linux
+- **Installers generated**: `.msi`, `.dmg`, `.deb`, `.AppImage`
+
+```bash
+# Create a release
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+**📖 See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide**
+
+### Manual Building
+
+#### Desktop App
 
 Build for your current platform:
 ```bash
@@ -257,7 +286,7 @@ This creates:
 - **Windows**: `.msi` installer in `src-tauri/target/release/bundle/msi/`
 - **Linux**: `.deb`, `.AppImage` in `src-tauri/target/release/bundle/`
 
-### Landing Page
+#### Landing Page
 
 Build the static site:
 ```bash
@@ -267,11 +296,23 @@ npm run build
 
 Output directory: `apps/landing/dist/`
 
-Deploy to:
-- Vercel
-- Netlify
-- GitHub Pages
-- Any static hosting service
+### GitHub Workflows
+
+Three automated workflows are configured:
+
+1. **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+   - Runs on every push and PR
+   - Builds and type-checks all apps
+   - Runs tests
+
+2. **Deploy** ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml))
+   - Deploys landing page to AWS on push to `main`
+   - Creates preview environments for PRs
+
+3. **Release** ([`.github/workflows/release.yml`](.github/workflows/release.yml))
+   - Triggered by version tags (e.g., `v1.0.0`)
+   - Builds desktop apps for all platforms
+   - Creates GitHub release with installers
 
 ## 🎯 Roadmap
 

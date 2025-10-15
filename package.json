@@ -13,10 +13,18 @@
     "build:landing": "npm run build -w apps/landing",
     "build:desktop": "npm run tauri build -w apps/desktop",
     "dev": "npm run dev:landing & npm run dev:desktop",
-    "install:all": "npm install"
+    "install:all": "npm install",
+    "deploy": "sst deploy --stage production",
+    "deploy:dev": "sst deploy --stage dev",
+    "deploy:preview": "sst deploy --stage preview",
+    "sst:dev": "sst dev",
+    "sst:remove": "sst remove"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0"
+    "@types/node": "^20.10.0",
+    "aws-cdk-lib": "^2.142.1",
+    "constructs": "^10.3.0",
+    "sst": "^3.17.19"
   },
   "engines": {
     "node": ">=18.0.0",
