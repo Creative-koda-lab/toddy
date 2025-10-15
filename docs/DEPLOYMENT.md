@@ -329,7 +329,48 @@ Domains are automatically configured per stage:
 - Verify all environment variables are set
 - Test locally with `npm run build:landing`
 
-#### 4. Permission errors during deployment
+#### 4. "failed to get shared config profile, AdministratorAccess-XXXXX"
+
+**Problem:** SST Console encounters AWS credential conflicts
+
+**Root Cause:**
+- You have `AWS_PROFILE` environment variable set locally
+- Mismatch between local AWS CLI profiles and SST Console
+- SST trying to use local credentials instead of Console-managed ones
+
+**Solution:**
+
+1. Check for local AWS environment variables:
+   ```bash
+   env | grep AWS
+   ```
+
+2. Unset AWS environment variables:
+   ```bash
+   # Temporarily for this session
+   unset AWS_PROFILE
+   unset AWS_ACCESS_KEY_ID
+   unset AWS_SECRET_ACCESS_KEY
+   unset AWS_SESSION_TOKEN
+
+   # Permanently: Edit ~/.zshrc or ~/.bashrc
+   # Remove any AWS_PROFILE exports
+   ```
+
+3. Important: SST Console autodeploy runs in AWS CodeBuild using IAM roles - no local credentials needed
+
+4. For local deployments only:
+   ```bash
+   AWS_PROFILE=your-profile sst deploy --stage dev
+   ```
+
+**Why this happens:**
+- AWS SSO/IAM Identity Center creates profiles like `AdministratorAccess-{AccountId}`
+- These require active SSO sessions (`aws sso login`)
+- SST Console doesn't use local profiles - it has direct AWS access
+- Local `AWS_PROFILE` conflicts with Console's credential management
+
+#### 5. Permission errors during deployment
 
 **Problem:** AWS permissions insufficient
 

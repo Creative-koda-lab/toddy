@@ -127,6 +127,20 @@ This creates/updates:
 
 ## Troubleshooting
 
+### "failed to get shared config profile, AdministratorAccess-XXXXX"
+
+**Quick Fix:**
+```bash
+# Unset AWS environment variables
+unset AWS_PROFILE
+unset AWS_ACCESS_KEY_ID
+unset AWS_SECRET_ACCESS_KEY
+```
+
+SST Console manages AWS credentials automatically - you don't need local profiles!
+
+**See [SST-TROUBLESHOOTING.md](./SST-TROUBLESHOOTING.md) for detailed solutions.**
+
 ### "Cloudflare API token is invalid"
 - Verify token has DNS edit permissions
 - Check it's for the correct zone (`creative-koda.com`)
@@ -146,6 +160,17 @@ This creates/updates:
 - Wait 5-10 minutes for DNS propagation
 - Check Cloudflare DNS records manually
 - Verify CloudFront distribution is deployed in AWS Console
+
+### More Help
+
+**Comprehensive troubleshooting:** [SST-TROUBLESHOOTING.md](./SST-TROUBLESHOOTING.md)
+
+This guide covers:
+- All common SST Console errors
+- Step-by-step fixes
+- AWS credential issues
+- DNS and domain problems
+- Build failures
 
 ## Cost Estimate
 

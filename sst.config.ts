@@ -11,6 +11,8 @@ export default $config({
       name: "toddy",
       removal: input?.stage === "production" ? "retain" : "remove",
       home: "aws",
+      // Don't specify a profile - let SST Console manage AWS credentials automatically
+      // If deploying locally, use: AWS_PROFILE=your-profile-name sst deploy
       providers: {
         cloudflare: "6.10.0",
       }

@@ -88,6 +88,62 @@ This error means GitHub Actions is trying to run but can't find AWS credentials.
 
 **Solution:** The workflow is now disabled (`.yml.disabled` extension), so this error won't appear anymore.
 
+### "failed to get shared config profile, AdministratorAccess-XXXXX" Error
+
+This is a common error when SST Console tries to deploy but encounters AWS credential conflicts.
+
+**Cause:**
+- You have `AWS_PROFILE` environment variable set locally
+- There's a mismatch between local AWS CLI profiles and SST Console
+- SST is trying to use local credentials instead of Console-managed credentials
+
+**Solution:**
+
+1. **Check for local AWS environment variables:**
+   ```bash
+   # Check what's set
+   env | grep AWS
+
+   # You might see:
+   # AWS_PROFILE=AdministratorAccess-654654162389
+   # AWS_ACCESS_KEY_ID=...
+   # AWS_SECRET_ACCESS_KEY=...
+   ```
+
+2. **Unset AWS environment variables:**
+   ```bash
+   # Temporarily unset for this session
+   unset AWS_PROFILE
+   unset AWS_ACCESS_KEY_ID
+   unset AWS_SECRET_ACCESS_KEY
+   unset AWS_SESSION_TOKEN
+
+   # Or permanently remove from your shell config
+   # Edit ~/.zshrc or ~/.bashrc and remove AWS_PROFILE exports
+   ```
+
+3. **Let SST Console manage credentials:**
+   - SST Console autodeploy runs in AWS CodeBuild in YOUR account
+   - It uses IAM roles, not local profiles
+   - No local AWS credentials needed for Console deployments
+
+4. **Verify SST Console setup:**
+   - Go to SST Console → Settings → Autodeploy
+   - Confirm the AWS account is properly connected
+   - Check that the account ID matches your intended account
+
+5. **For local deployments only:**
+   If you need to deploy locally (not via Console), set the profile temporarily:
+   ```bash
+   AWS_PROFILE=your-profile-name sst deploy --stage dev
+   ```
+
+**Why this happens:**
+- When you use AWS SSO or IAM Identity Center, profiles are named like `AdministratorAccess-{AccountId}`
+- These profiles require active SSO sessions (`aws sso login`)
+- SST Console doesn't use these local profiles - it has direct AWS access
+- Having `AWS_PROFILE` set locally conflicts with Console's credential management
+
 ### Deployments Not Triggering
 
 If SST Console isn't deploying when you push:
