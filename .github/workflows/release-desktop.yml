@@ -30,12 +30,47 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const releaseNotes = `## Toddy Desktop v${process.env.PACKAGE_VERSION}
+
+            ### Downloads
+
+            Choose your platform:
+            - **macOS**: Download the \`.dmg\` file (Universal - supports both Intel and Apple Silicon)
+            - **Windows**: Download the \`.exe\` or \`.msi\` installer
+            - **Linux**: Download the \`.AppImage\` or \`.deb\` file
+
+            ### macOS Installation (Important!)
+
+            If you see **"Toddy.app is damaged and can't be opened"**, this is because the app is not yet code-signed. To fix this:
+
+            **Quick Fix (Terminal):**
+            \`\`\`bash
+            xattr -cr /Applications/Toddy.app
+            \`\`\`
+
+            **Or use Right-Click:**
+            1. Right-click on Toddy.app
+            2. Select "Open"
+            3. Click "Open" in the dialog
+
+            See [INSTALL.md](https://github.com/Creative-koda-lab/toddy/blob/main/INSTALL.md) for detailed installation instructions for all platforms.
+
+            ### What's New
+
+            - Initial release of Toddy Desktop
+            - Privacy-first architecture
+            - Cross-platform support (macOS, Windows, Linux)
+
+            ---
+
+            **Built with:** Tauri 2.0 + React + TypeScript`;
+
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: `v${process.env.PACKAGE_VERSION}`,
-              name: `Desktop App v${process.env.PACKAGE_VERSION}`,
-              body: 'See the assets to download and install this version.',
+              name: `Toddy Desktop v${process.env.PACKAGE_VERSION}`,
+              body: releaseNotes,
               draft: true,
               prerelease: false
             })
@@ -81,13 +116,41 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
+      - name: Setup macOS code signing (if secrets available)
+        if: matrix.platform == 'macos-latest' && secrets.APPLE_CERTIFICATE
+        run: |
+          echo "Code signing secrets detected"
+          echo "APPLE_SIGNING_ENABLED=true" >> $GITHUB_ENV
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS code signing (optional - only if secrets are set)
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Windows code signing (optional - only if secrets are set)
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
           args: ${{ matrix.args }}
           projectPath: apps/desktop
+
+      - name: Add installation instructions for macOS (unsigned builds)
+        if: matrix.platform == 'macos-latest' && !secrets.APPLE_CERTIFICATE
+        run: |
+          echo "⚠️  macOS builds are unsigned. Users will need to bypass Gatekeeper." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "To install unsigned .dmg:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download the .dmg file" >> $GITHUB_STEP_SUMMARY
+          echo "2. Right-click and select 'Open'" >> $GITHUB_STEP_SUMMARY
+          echo "3. Or run: xattr -cr /path/to/Toddy.app" >> $GITHUB_STEP_SUMMARY
 
   publish-release:
     permissions:
