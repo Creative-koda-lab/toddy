@@ -2,13 +2,27 @@
 
 This directory contains GitHub Actions workflows for automated deployments.
 
+## ⚠️ Current Setup: Using SST Console
+
+**Note:** The `deploy.yml` workflow is currently **disabled** (renamed to `deploy.yml.disabled`) because this project uses **SST Console** for automatic deployments instead.
+
+**See [USING-SST-CONSOLE.md](./USING-SST-CONSOLE.md) for the current deployment setup.**
+
+If you're getting a "Credentials could not be loaded" error, it's because you're using SST Console (which is correct) and the GitHub Actions workflow has been disabled to prevent conflicts.
+
+---
+
 ## Available Workflows
 
-### `deploy.yml` - Landing Page Deployment
+### `deploy.yml.disabled` - Landing Page Deployment (Currently Disabled)
 
-Automatically deploys the Astro landing page to AWS when changes are pushed.
+This workflow is available as an alternative to SST Console. To use it, you need to:
 
-**Triggers:**
+1. Rename `deploy.yml.disabled` to `deploy.yml`
+2. Set up AWS credentials (see setup instructions below)
+3. Disable SST Console autodeploy
+
+**Would deploy on these triggers:**
 - Push to `main` branch → Deploys to production
 - Push to `dev` branch → Deploys to dev environment
 - Pull requests → Creates preview deployments
