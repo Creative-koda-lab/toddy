@@ -67,23 +67,11 @@ export default $config({
         if (event.type === "pull_request") {
           return { stage: `pr-${event.number}` };
         }
-      },
-
-      // Custom workflow for build and deployment
-      async workflow({ $, event }) {
-        // Install dependencies
-        await $`npm install`;
-
-        // Build the landing page to verify it compiles
-        await $`npm run build:landing`;
-
-        // Deploy or remove based on action
-        if (event.action === "removed") {
-          await $`npm run sst remove`;
-        } else {
-          await $`npm run deploy`;
-        }
       }
+
+      // Note: Custom workflow removed - SST Console handles deployment automatically
+      // The default workflow is: npm install -> sst deploy/remove
+      // If you need custom steps (tests, etc.), add a workflow function here
     }
   }
 });

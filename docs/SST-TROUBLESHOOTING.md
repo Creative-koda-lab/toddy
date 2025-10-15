@@ -72,6 +72,84 @@ git push origin dev
 
 ---
 
+## Error: "It looks like the Pulumi SDK has not been installed"
+
+### The Problem
+SST Console build fails with "Pulumi SDK has not been installed" or "Have you run pulumi install?"
+
+### Root Cause
+This happens when your custom workflow in `sst.config.ts` calls npm scripts that try to use SST before it's properly installed in the Console environment.
+
+### Quick Fix
+
+**Remove the custom workflow** - SST Console has a default workflow that works perfectly:
+
+Your `sst.config.ts` should look like:
+```typescript
+console: {
+  autodeploy: {
+    target(event) {
+      if (event.type === "branch" && event.branch === "main" && event.action === "pushed") {
+        return { stage: "production" };
+      }
+      if (event.type === "branch" && event.branch === "dev" && event.action === "pushed") {
+        return { stage: "dev" };
+      }
+      if (event.type === "pull_request") {
+        return { stage: `pr-${event.number}` };
+      }
+    }
+    // No workflow needed! SST Console handles it automatically
+  }
+}
+```
+
+### Default Workflow (Automatic)
+
+SST Console automatically runs:
+```bash
+npm install     # Installs all dependencies including SST
+sst deploy      # or sst remove for cleanup
+```
+
+### When to Use Custom Workflow
+
+Only add a custom `workflow` function if you need:
+- Run tests before deployment
+- Build steps before SST runs
+- Custom environment setup
+
+**Example with tests:**
+```typescript
+async workflow({ $, event }) {
+  await $`npm install`;
+  await $`npm test`;  // Run tests first
+
+  // SST Console will automatically run sst deploy after workflow
+}
+```
+
+### Why This Happens
+- Custom workflow called `npm run deploy` which calls `sst deploy`
+- But SST dependencies weren't in the PATH yet
+- Pulumi (SST's underlying tool) wasn't found
+- Solution: Let SST Console handle deployment automatically
+
+### After the Fix
+
+1. **Commit the change:**
+   ```bash
+   git add sst.config.ts
+   git commit -m "fix: remove custom workflow, use SST Console default"
+   git push origin dev
+   ```
+
+2. **Watch it deploy:**
+   - Go to SST Console → Autodeploy tab
+   - Should see successful deployment now
+
+---
+
 ## Error: "Credentials could not be loaded"
 
 ### The Problem

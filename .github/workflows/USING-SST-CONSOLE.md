@@ -202,19 +202,10 @@ console: {
       if (event.type === "pull_request") {
         return { stage: `pr-${event.number}` };
       }
-    },
-
-    // Custom build workflow
-    async workflow({ $, event }) {
-      await $`npm install`;
-      await $`npm run build:landing`;
-
-      if (event.action === "removed") {
-        await $`npm run sst remove`;
-      } else {
-        await $`npm run deploy`;
-      }
     }
+
+    // No custom workflow - SST Console handles deployment automatically
+    // Default workflow: npm install -> sst deploy/remove
   }
 }
 ```
@@ -222,8 +213,17 @@ console: {
 This means:
 - ✅ Automatic deployments on push to `main` or `dev`
 - ✅ Automatic PR preview environments
-- ✅ Custom build workflow (install, build, deploy)
+- ✅ SST Console's default workflow (install → deploy)
 - ✅ Automatic cleanup when PRs are closed
+
+### How Autodeploy Works
+
+SST Console automatically:
+1. Runs `npm install` to install dependencies (including SST)
+2. Runs `sst deploy --stage {your-stage}` to deploy
+3. Or runs `sst remove --stage {your-stage}` for cleanup
+
+**No custom workflow needed!** This is simpler and more reliable.
 
 ## Documentation
 
