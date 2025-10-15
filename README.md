@@ -20,14 +20,22 @@ Toddy is a cross-platform desktop application that helps you organize your tasks
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Download Pre-built App
+
+**Latest Release**: [Download for macOS, Windows, or Linux](https://github.com/Creative-koda-lab/toddy/releases/latest)
+
+> **macOS Users**: If you see a "damaged" error, follow [these instructions](./docs/INSTALLING_UNSIGNED_MAC.md) to install the unsigned app. Simply **right-click** the app and select **"Open"** instead of double-clicking.
+
+### Build From Source
+
+#### Prerequisites
 
 - [Node.js](https://nodejs.org/) >= 18.0.0
 - [npm](https://www.npmjs.com/) >= 9.0.0
 - [Rust](https://rustup.rs/) (for Tauri desktop app)
 - [Tauri Prerequisites](https://tauri.app/start/prerequisites/) for your operating system
 
-### Installation
+#### Installation
 
 1. **Clone the repository**
    ```bash
