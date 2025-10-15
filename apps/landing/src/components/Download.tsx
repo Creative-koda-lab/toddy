@@ -39,14 +39,30 @@ export default function Download() {
     }
 
     // Fetch latest release from GitHub
-    fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`)
-      .then(res => res.json())
+    fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, {
+      headers: {
+        'Accept': 'application/vnd.github+json',
+      }
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`GitHub API returned ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
-        setRelease(data);
+        // Check if it's an error response
+        if (data.message) {
+          console.warn('No releases found:', data.message);
+          setRelease(null);
+        } else {
+          setRelease(data);
+        }
         setLoading(false);
       })
       .catch(err => {
         console.error('Failed to fetch release:', err);
+        setRelease(null);
         setLoading(false);
       });
   }, []);
@@ -152,28 +168,41 @@ export default function Download() {
                     Download for {primaryPlatform.name}
                   </h3>
                   <p className="text-muted-foreground mb-6">
-                    {loading ? 'Loading...' : `Version ${version} • ${primaryPlatform.fileSize} • Universal`}
+                    {loading
+                      ? 'Loading...'
+                      : release
+                      ? `Version ${version} • ${primaryPlatform.fileSize} • Universal`
+                      : 'Coming soon - No releases available yet'}
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <a
-                      href={primaryPlatform.downloadUrl}
-                      className={`inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold transition-colors shadow-lg ${
-                        loading || primaryPlatform.downloadUrl === '#'
-                          ? 'bg-primary/50 text-primary-foreground cursor-not-allowed'
-                          : 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/25'
-                      }`}
-                      onClick={(e) => {
-                        if (loading || primaryPlatform.downloadUrl === '#') {
-                          e.preventDefault();
-                        }
-                      }}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      {loading ? 'Loading...' : 'Download Now'}
-                    </a>
+                    {!loading && !release ? (
+                      <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold bg-muted text-muted-foreground">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Release Coming Soon
+                      </div>
+                    ) : (
+                      <a
+                        href={primaryPlatform.downloadUrl}
+                        className={`inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-semibold transition-colors shadow-lg ${
+                          loading || primaryPlatform.downloadUrl === '#'
+                            ? 'bg-primary/50 text-primary-foreground cursor-not-allowed'
+                            : 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/25'
+                        }`}
+                        onClick={(e) => {
+                          if (loading || primaryPlatform.downloadUrl === '#') {
+                            e.preventDefault();
+                          }
+                        }}
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        {loading ? 'Loading...' : 'Download Now'}
+                      </a>
+                    )}
                     <a
                       href="https://github.com/Creative-koda-lab/toddy/releases"
                       target="_blank"
