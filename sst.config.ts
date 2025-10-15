@@ -14,7 +14,9 @@ export default $config({
       // Don't specify a profile - let SST Console manage AWS credentials automatically
       // If deploying locally, use: AWS_PROFILE=your-profile-name sst deploy
       providers: {
-        cloudflare: "6.10.0",
+        // Use default Cloudflare provider version (no version specified)
+        // This avoids needing to run 'sst install' manually
+        cloudflare: true,
       }
     };
   },
@@ -69,9 +71,14 @@ export default $config({
         }
       }
 
-      // Note: Custom workflow removed - SST Console handles deployment automatically
-      // The default workflow is: npm install -> sst deploy/remove
-      // If you need custom steps (tests, etc.), add a workflow function here
+      // Note: No custom workflow needed - SST Console handles deployment automatically
+      // Default workflow: npm install -> sst deploy/remove
+      //
+      // If you need a specific provider version, add a workflow:
+      // async workflow({ $, event }) {
+      //   await $`npm install`;
+      //   await $`npx sst install`;  // Required for pinned provider versions
+      // }
     }
   }
 });

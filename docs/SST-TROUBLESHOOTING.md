@@ -130,10 +130,28 @@ async workflow({ $, event }) {
 ```
 
 ### Why This Happens
-- Custom workflow called `npm run deploy` which calls `sst deploy`
-- But SST dependencies weren't in the PATH yet
-- Pulumi (SST's underlying tool) wasn't found
-- Solution: Let SST Console handle deployment automatically
+- **Custom workflow issue:** Called `npm run deploy` which calls `sst deploy` before dependencies were ready
+- **Provider version pinning:** When you specify a provider version (like `cloudflare: "6.10.0"`), you must run `sst install` first
+- **SST Console limitation:** Console doesn't automatically run `sst install` before deploying
+- **Solution:** Use default provider versions or add a workflow that runs `sst install`
+
+### Alternative Fix: Use Default Provider Version
+
+Instead of specifying a version:
+```typescript
+providers: {
+  cloudflare: "6.10.0",  // ❌ Requires 'sst install'
+}
+```
+
+Use the default:
+```typescript
+providers: {
+  cloudflare: true,  // ✅ No 'sst install' needed
+}
+```
+
+This lets SST use its built-in Cloudflare provider version.
 
 ### After the Fix
 
