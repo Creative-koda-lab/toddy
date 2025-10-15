@@ -1,0 +1,51 @@
+---
+import Hero from '../components/Hero';
+import Features from '../components/Features';
+import Download from '../components/Download';
+import Footer from '../components/Footer';
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+
+		<!-- SEO Meta Tags -->
+		<title>Toddy - Privacy-First Desktop App | Free & Open Source</title>
+		<meta name="description" content="A privacy-first desktop application that keeps all your data securely stored on your computer. 100% free, open source, and offline-first. Available for Windows, macOS, and Linux." />
+		<meta name="keywords" content="privacy, desktop app, open source, offline, free, local storage, Tauri, cross-platform" />
+		<meta name="author" content="Toddy Contributors" />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://toddy.app/" />
+		<meta property="og:title" content="Toddy - Privacy-First Desktop App | Free & Open Source" />
+		<meta property="og:description" content="A privacy-first desktop application that keeps all your data securely stored on your computer. 100% free, open source, and offline-first." />
+		<meta property="og:image" content="/og-image.png" />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content="https://toddy.app/" />
+		<meta property="twitter:title" content="Toddy - Privacy-First Desktop App | Free & Open Source" />
+		<meta property="twitter:description" content="A privacy-first desktop application that keeps all your data securely stored on your computer. 100% free, open source, and offline-first." />
+		<meta property="twitter:image" content="/og-image.png" />
+
+		<!-- Theme Color -->
+		<meta name="theme-color" content="#0f172a" />
+
+		<!-- Preconnect for performance -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+	</head>
+	<body class="antialiased">
+		<main>
+			<Hero client:load />
+			<Features client:load />
+			<Download client:load />
+		</main>
+		<Footer client:load />
+	</body>
+</html>
