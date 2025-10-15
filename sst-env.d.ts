@@ -5,10 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "MyRouter": {
-      "type": "sst.aws.Router"
-      "url": string
-    }
     "ToddyLanding": {
       "type": "sst.aws.Astro"
       "url": string

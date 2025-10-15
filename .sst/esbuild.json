@@ -1,5 +1,5 @@
 
-  .sst/platform/sst.config.1760527035148.mjs ────────────────────────────────────── 758.2kb ─ 100.0%
+  .sst/platform/sst.config.1760561295425.mjs ────────────────────────────────────── 758.9kb ─ 100.0%
    ├ .sst/platform/src/components/aws/router.ts ──────────────────────────────────── 34.9kb ─── 4.6%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
@@ -135,7 +135,7 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ .sst/platform/src/components/aws/queue.ts ────────────────────────────────────── 8.0kb ─── 1.1%
+   ├ .sst/platform/src/components/aws/queue.ts ────────────────────────────────────── 8.0kb ─── 1.0%
    │  └ .sst/platform/src/components/aws/index.ts
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
@@ -217,7 +217,7 @@
    ├ .sst/platform/src/components/link.ts ─────────────────────────────────────────── 4.2kb ─── 0.6%
    │  └ .sst/platform/src/auto/run.ts
    │     └ eval.ts
-   ├ .sst/platform/src/components/aws/https-redirect.ts ───────────────────────────── 4.2kb ─── 0.6%
+   ├ .sst/platform/src/components/aws/https-redirect.ts ───────────────────────────── 4.2kb ─── 0.5%
    │  └ .sst/platform/src/components/aws/cdn.ts
    │     └ .sst/platform/src/components/aws/index.ts
    │        └ .sst/platform/src/components/index.ts
@@ -442,6 +442,8 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
+   ├ sst.config.ts ────────────────────────────────────────────────────────────────── 2.0kb ─── 0.3%
+   │  └ eval.ts
    ├ .sst/platform/src/components/cloudflare/experimental/solid-start.ts ──────────── 2.0kb ─── 0.3%
    │  └ .sst/platform/src/components/cloudflare/experimental/index.ts
    │     └ .sst/platform/src/components/cloudflare/index.ts
@@ -637,8 +639,6 @@
    │     └ .sst/platform/src/components/index.ts
    │        └ sst.config.ts
    │           └ eval.ts
-   ├ sst.config.ts ────────────────────────────────────────────────────────────────── 1.1kb ─── 0.1%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/apigatewayv1-api-key.ts ─────────────────────── 1.1kb ─── 0.1%
    │  └ .sst/platform/src/components/aws/apigatewayv1-usage-plan.ts
    │     └ .sst/platform/src/components/aws/apigatewayv1.ts
@@ -729,8 +729,6 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 555b ──── 0.1%
-   │  └ eval.ts
    ├ .sst/platform/src/util/compare-semver.ts ─────────────────────────────────────── 552b ──── 0.1%
    │  └ .sst/platform/src/components/aws/nextjs.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -783,6 +781,8 @@
    │  └ .sst/platform/src/components/index.ts
    │     └ sst.config.ts
    │        └ eval.ts
+   ├ <define:$cli> ────────────────────────────────────────────────────────────────── 349b ──── 0.0%
+   │  └ eval.ts
    ├ .sst/platform/src/components/aws/step-functions/fail.ts ──────────────────────── 326b ──── 0.0%
    │  └ .sst/platform/src/components/aws/step-functions.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -795,8 +795,6 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
-   ├ <define:$app> ────────────────────────────────────────────────────────────────── 312b ──── 0.0%
-   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/distribution-invalidation.ts ──────── 307b ──── 0.0%
    │  └ .sst/platform/src/components/aws/static-site.ts
    │     └ .sst/platform/src/components/aws/index.ts
@@ -815,6 +813,8 @@
    │        └ .sst/platform/src/components/index.ts
    │           └ sst.config.ts
    │              └ eval.ts
+   ├ <define:$app> ────────────────────────────────────────────────────────────────── 293b ──── 0.0%
+   │  └ eval.ts
    ├ .sst/platform/src/components/aws/providers/origin-access-control.ts ──────────── 292b ──── 0.0%
    │  └ .sst/platform/src/components/aws/router.ts
    │     └ .sst/platform/src/components/aws/index.ts
