@@ -2,6 +2,7 @@
 node_modules/
 .pnp
 .pnp.js
+.sst
 
 # Production
 dist/
