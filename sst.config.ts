@@ -79,7 +79,7 @@ export default $config({
         // Install SST provider dependencies (required for Pulumi/providers)
         await $`npx sst install`;
 
-        // Note: SST Console will automatically run 'sst deploy' or 'sst remove' after this workflow
+        await $`npx sst deploy --stage ${$app.stage} --region us-east-1 --yes`;
       }
     }
   }
