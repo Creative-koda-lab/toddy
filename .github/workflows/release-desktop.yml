@@ -35,31 +35,7 @@ jobs:
               repo: context.repo.repo,
               tag_name: `v${process.env.PACKAGE_VERSION}`,
               name: `Toddy v${process.env.PACKAGE_VERSION}`,
-              body: `## Download Toddy v${process.env.PACKAGE_VERSION}
-
-Choose the right file for your operating system:
-
-- **macOS (Apple Silicon)**: \`toddy_${process.env.PACKAGE_VERSION}_aarch64.dmg\`
-- **macOS (Intel)**: \`toddy_${process.env.PACKAGE_VERSION}_x64.dmg\`
-- **Windows**: \`toddy_${process.env.PACKAGE_VERSION}_x64-setup.exe\`
-- **Linux (Debian/Ubuntu)**: \`toddy_${process.env.PACKAGE_VERSION}_amd64.deb\`
-- **Linux (AppImage)**: \`toddy_${process.env.PACKAGE_VERSION}_amd64.AppImage\`
-
-### ⚠️ macOS Installation Note
-
-If you see a **"damaged and can't be opened"** error on macOS:
-
-1. **Right-click** (or Control+click) on the Toddy app
-2. Select **"Open"** from the menu
-3. Click **"Open"** in the dialog
-
-[See detailed instructions](https://github.com/Creative-koda-lab/toddy/blob/main/docs/INSTALLING_UNSIGNED_MAC.md)
-
-This happens because the app is not code-signed (requires $99/year Apple Developer account). The app is completely safe and open-source.
-
-### What's New
-
-See the assets below to download and install this version.`,
+              body: `## Download Toddy v${process.env.PACKAGE_VERSION}`,
               draft: true,
               prerelease: false
             })
