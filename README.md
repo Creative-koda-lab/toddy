@@ -29,7 +29,7 @@ Toddy is a cross-platform desktop application that helps you organize your tasks
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/toddy.git
+   git clone https://github.com/Creative-koda-lab/toddy.git
    cd toddy
    ```
 
@@ -244,21 +244,48 @@ interface Todo {
 
 ## 🚢 Deployment & Building
 
-### Automated Deployment
+### Automated Deployment with SST
 
-This project includes complete CI/CD pipelines for automated deployment:
+The landing page is deployed to AWS using **SST (Serverless Stack)** with automatic GitHub integration. You have two options:
 
-#### 🌐 Landing Page (AWS)
-- **Automatic deployment** to AWS using SST on push to `main`
-- **Preview deployments** for pull requests
-- Deployed via **GitHub Actions** to AWS CloudFront + Lambda
+#### Option 1: SST Console (Recommended)
+- No GitHub Actions needed
+- GUI-based setup at [console.sst.dev](https://console.sst.dev)
+- Automatic deployments on push to `main` (production) or `dev` branches
+- PR preview environments automatically created and cleaned up
+- Runs builds in your AWS account
+
+#### Option 2: GitHub Actions
+- Traditional CI/CD approach
+- More control over the pipeline
+- Requires manual AWS credential setup
+- Workflow file included at `.github/workflows/deploy.yml`
+
+**📖 See [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md) for complete setup instructions**
+
+### Deployment Stages
+
+- **Production** (`main` branch) → `toddy.creative-koda.com`
+- **Development** (`dev` branch) → `toddy-dev.creative-koda.com`
+- **PR Previews** → `toddy-pr-{number}.creative-koda.com`
+
+### Quick Deploy Commands
 
 ```bash
-# Deploy manually
-npx sst deploy --stage production
+# Deploy to production (requires AWS credentials)
+npm run deploy
+
+# Deploy to dev stage
+npm run deploy:dev
+
+# Deploy to preview stage
+npm run deploy:preview
+
+# Remove a stage
+npm run sst:remove
 ```
 
-#### 📦 Desktop App Releases
+### Desktop App Releases
 - **Automatic releases** created when pushing version tags
 - **Multi-platform builds**: Windows, macOS, Linux
 - **Installers generated**: `.msi`, `.dmg`, `.deb`, `.AppImage`
@@ -268,8 +295,6 @@ npx sst deploy --stage production
 git tag v1.0.0
 git push origin v1.0.0
 ```
-
-**📖 See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide**
 
 ### Manual Building
 
@@ -298,21 +323,15 @@ Output directory: `apps/landing/dist/`
 
 ### GitHub Workflows
 
-Three automated workflows are configured:
+The project includes GitHub Actions workflows (optional - SST Console is the recommended approach):
 
-1. **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
-   - Runs on every push and PR
-   - Builds and type-checks all apps
-   - Runs tests
-
-2. **Deploy** ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml))
-   - Deploys landing page to AWS on push to `main`
+1. **Deploy** ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml))
+   - Deploys landing page to AWS on push to `main` or `dev`
    - Creates preview environments for PRs
+   - Automatically cleans up PR previews when closed
+   - Requires AWS and Cloudflare credentials setup
 
-3. **Release** ([`.github/workflows/release.yml`](.github/workflows/release.yml))
-   - Triggered by version tags (e.g., `v1.0.0`)
-   - Builds desktop apps for all platforms
-   - Creates GitHub release with installers
+See [`.github/workflows/README.md`](.github/workflows/README.md) for complete setup instructions.
 
 ## 🎯 Roadmap
 
@@ -385,9 +404,9 @@ Built with amazing open-source technologies:
 
 ## 📧 Contact & Links
 
-- **GitHub**: [https://github.com/yourusername/toddy](https://github.com/yourusername/toddy)
-- **Issues**: [Report a bug or request a feature](https://github.com/yourusername/toddy/issues)
-- **Website**: [Landing Page](https://toddy.app)
+- **GitHub**: [https://github.com/Creative-koda-lab/toddy](https://github.com/Creative-koda-lab/toddy)
+- **Issues**: [Report a bug or request a feature](https://github.com/Creative-koda-lab/toddy/issues)
+- **Website**: [toddy.creative-koda.com](https://toddy.creative-koda.com)
 
 ---
 

@@ -36,7 +36,7 @@ export default function Hero() {
               Download Now
             </a>
             <a
-              href="https://github.com/taissirtigzirt/toddy"
+              href="https://github.com/Creative-koda-lab/toddy"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-lg border border-border bg-background text-foreground font-semibold hover:bg-accent transition-colors"

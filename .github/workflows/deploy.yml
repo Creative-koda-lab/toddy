@@ -1,19 +1,33 @@
-name: Deploy to AWS
+name: Deploy Landing Page
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:  # Allow manual triggering
+      - dev
+    paths:
+      - 'apps/landing/**'
+      - 'sst.config.ts'
+      - 'package.json'
+      - '.github/workflows/deploy.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    paths:
+      - 'apps/landing/**'
+      - 'sst.config.ts'
 
 permissions:
   contents: read
-  id-token: write  # Required for AWS OIDC authentication
+  pull-requests: write
+  id-token: write # Required for OIDC authentication
 
 jobs:
   deploy:
+    name: Deploy to AWS
     runs-on: ubuntu-latest
-    environment: production
+
+    # Skip deployment on PR close events (we only remove the stage)
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
 
     steps:
       - name: Checkout repository
@@ -26,44 +40,105 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Determine deployment stage
+        id: stage
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "stage=pr-${{ github.event.number }}" >> $GITHUB_OUTPUT
+            echo "url=https://toddy-pr-${{ github.event.number }}.creative-koda.com" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "stage=production" >> $GITHUB_OUTPUT
+            echo "url=https://toddy.creative-koda.com" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/dev" ]; then
+            echo "stage=dev" >> $GITHUB_OUTPUT
+            echo "url=https://toddy-dev.creative-koda.com" >> $GITHUB_OUTPUT
+          else
+            echo "stage=preview" >> $GITHUB_OUTPUT
+            echo "url=https://toddy-preview.creative-koda.com" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build landing page
+        run: npm run build:landing
+        env:
+          PUBLIC_SITE_URL: ${{ steps.stage.outputs.url }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          # Option 1: Use OIDC (recommended)
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
-          # Alternatively, use access keys (less secure):
+
+          # Option 2: Use access keys (uncomment if not using OIDC)
           # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Deploy to AWS with SST
-        run: npx sst deploy --stage production
         env:
-          CI: true
-
-      - name: Get deployment URL
-        id: deploy-url
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          URL=$(npx sst url --stage production)
-          echo "url=$URL" >> $GITHUB_OUTPUT
+          npx sst deploy --stage ${{ steps.stage.outputs.stage }}
 
-      - name: Comment deployment URL on PR
+      - name: Comment on PR with deployment URL
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.createComment({
+            const stage = '${{ steps.stage.outputs.stage }}';
+            const url = '${{ steps.stage.outputs.url }}';
+
+            const comment = `## 🚀 Preview Deployment Successful
+
+            Your changes have been deployed to a preview environment:
+
+            **🔗 Preview URL:** ${url}
+
+            This preview will be automatically removed when the PR is closed.
+
+            <details>
+            <summary>Deployment Details</summary>
+
+            - **Stage:** \`${stage}\`
+            - **Commit:** ${context.sha.substring(0, 7)}
+            - **Workflow:** [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            </details>`;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '🚀 Deployed to: ${{ steps.deploy-url.outputs.url }}'
-            })
+            });
 
-  deploy-preview:
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Preview Deployment')
+            );
+
+            // Update existing comment or create new one
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                comment_id: botComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+
+  cleanup:
+    name: Remove PR Preview
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    environment: preview
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
 
     steps:
       - name: Checkout repository
@@ -76,32 +151,36 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          # Option 1: Use OIDC (recommended)
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      - name: Deploy preview to AWS with SST
-        run: npx sst deploy --stage preview-${{ github.event.pull_request.number }}
+          # Option 2: Use access keys (uncomment if not using OIDC)
+          # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Remove preview stage
         env:
-          CI: true
-
-      - name: Get preview URL
-        id: preview-url
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          URL=$(npx sst url --stage preview-${{ github.event.pull_request.number }})
-          echo "url=$URL" >> $GITHUB_OUTPUT
+          npx sst remove --stage pr-${{ github.event.number }}
 
-      - name: Comment preview URL on PR
+      - name: Comment on PR
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.createComment({
+            const comment = `## 🧹 Preview Environment Cleaned Up
+
+            The preview environment for this PR has been removed.`;
+
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '🔍 Preview deployed to: ${{ steps.preview-url.outputs.url }}'
-            })
+              body: comment
+            });
