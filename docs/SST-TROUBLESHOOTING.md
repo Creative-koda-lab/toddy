@@ -82,9 +82,9 @@ This happens when your custom workflow in `sst.config.ts` calls npm scripts that
 
 ### Quick Fix
 
-**Remove the custom workflow** - SST Console has a default workflow that works perfectly:
+**Add a workflow that runs `sst install`** - This is required for provider initialization:
 
-Your `sst.config.ts` should look like:
+Your `sst.config.ts` needs:
 ```typescript
 console: {
   autodeploy: {
@@ -98,34 +98,47 @@ console: {
       if (event.type === "pull_request") {
         return { stage: `pr-${event.number}` };
       }
+    },
+
+    // Required workflow to install SST providers
+    async workflow({ $ }) {
+      await $`npm install`;      // Install npm dependencies
+      await $`npx sst install`;  // Install SST provider dependencies (Pulumi)
+      // SST Console will automatically run 'sst deploy' after this
     }
-    // No workflow needed! SST Console handles it automatically
   }
 }
 ```
 
-### Default Workflow (Automatic)
+### Why `sst install` is Required
 
-SST Console automatically runs:
+SST Console's default workflow only runs:
 ```bash
-npm install     # Installs all dependencies including SST
-sst deploy      # or sst remove for cleanup
+npm install     # ✅ Installs npm packages
+sst deploy      # ❌ Fails because providers aren't installed
+```
+
+You need to add `sst install` to install provider packages:
+```bash
+npm install     # Install npm packages
+sst install     # Install SST/Pulumi provider packages
+sst deploy      # Now works!
 ```
 
 ### When to Use Custom Workflow
 
-Only add a custom `workflow` function if you need:
-- Run tests before deployment
-- Build steps before SST runs
-- Custom environment setup
+You MUST add a workflow if:
+- ✅ Using any providers (AWS, Cloudflare, etc.) - ALWAYS needed
+- Using custom provider versions
+- Running tests before deployment
+- Custom build steps
 
 **Example with tests:**
 ```typescript
-async workflow({ $, event }) {
+async workflow({ $ }) {
   await $`npm install`;
-  await $`npm test`;  // Run tests first
-
-  // SST Console will automatically run sst deploy after workflow
+  await $`npx sst install`;  // Required for providers
+  await $`npm test`;         // Optional: run tests first
 }
 ```
 

@@ -69,16 +69,18 @@ export default $config({
         if (event.type === "pull_request") {
           return { stage: `pr-${event.number}` };
         }
-      }
+      },
 
-      // Note: No custom workflow needed - SST Console handles deployment automatically
-      // Default workflow: npm install -> sst deploy/remove
-      //
-      // If you need a specific provider version, add a workflow:
-      // async workflow({ $, event }) {
-      //   await $`npm install`;
-      //   await $`npx sst install`;  // Required for pinned provider versions
-      // }
+      // Custom workflow needed to run 'sst install' for providers
+      async workflow({ $ }) {
+        // Install npm dependencies
+        await $`npm install`;
+
+        // Install SST provider dependencies (required for Pulumi/providers)
+        await $`npx sst install`;
+
+        // Note: SST Console will automatically run 'sst deploy' or 'sst remove' after this workflow
+      }
     }
   }
 });
