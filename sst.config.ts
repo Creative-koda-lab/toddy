@@ -79,7 +79,7 @@ export default $config({
         // Install SST provider dependencies (required for Pulumi/providers)
         await $`npx sst install`;
 
-        await $`npx sst deploy --stage ${$app.stage} --region us-east-1 --yes`;
+        await $`npx sst deploy --stage production --region us-east-1 --yes`;
       }
     }
   }
